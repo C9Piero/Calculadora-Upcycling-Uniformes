@@ -1,32 +1,79 @@
 import streamlit as st
 import pandas as pd
+import os
 
-# 1. Configuración de la página con título e icono web de hojas verdes
+# 1. CONFIGURACIÓN DE LA PÁGINA
 st.set_page_config(
-    page_title="Calculadora Sostenible Eco-Impacto", 
-    page_icon="🌱", 
+    page_title="Pequeños Detalles - Calculadora de Impacto Sostenible", 
+    page_icon="🌸", 
     layout="wide"
 )
 
-# Estilos CSS personalizados para darle vida y quitar la frialdad industrial
+# 2. ESTILOS CSS CON LOS TONOS ROSADOS Y CORPORATIVOS DE TU LOGO
 st.markdown("""
     <style>
-    .main { background-color: #f9fbf9; }
-    h1 { color: #1e4d2b; font-family: 'Helvetica Neue', sans-serif; }
-    h3 { color: #2e7d32; }
+    /* Fondo general de la aplicación: un tono hueso/crema muy suave y elegante */
+    .stApp {
+        background-color: #faf6f5;
+    }
+    
+    /* Contenedores estilo tarjeta blanca con bordes sutiles */
+    div[data-testid="stVerticalBlock"] > div[data-testid="stContainer"] {
+        background-color: #ffffff;
+        padding: 26px;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(224, 182, 182, 0.15);
+        border: 1px solid #f2e6e6;
+        margin-bottom: 20px;
+    }
+    
+    /* Títulos principales en un tono oscuro sofisticado */
+    h1 {
+        color: #3a2226;
+        font-family: 'Segoe UI', Roboto, sans-serif;
+        font-weight: 700;
+        text-align: center;
+    }
+    
+    h3 {
+        color: #e57393; /* El rosa característico de tu marca */
+        font-family: 'Segoe UI', Roboto, sans-serif;
+        font-weight: 600;
+        margin-bottom: 15px !important;
+    }
+    
+    /* Botón Principal con el rosa del logo */
     .stButton>button {
-        background-color: #2e7d32;
+        background-color: #f17394;
         color: white;
         border-radius: 8px;
         border: none;
-        padding: 10px 20px;
-        font-weight: bold;
+        padding: 12px 24px;
+        font-weight: 600;
+        transition: all 0.3s ease;
     }
-    .stButton>button:hover { background-color: #1b5e20; color: white; }
+    .stButton>button:hover {
+        background-color: #d65677;
+        color: white;
+        transform: translateY(-1px);
+    }
     </style>
 """, unsafe_allow_html=True)
 
-# BASE DE DATOS MAESTRA COMPLETA (Tus 56 prendas exactas)
+# 3. INTERFAZ: LOGO CENTRADO (Ya corregido a .png)
+logo_path = "pequeños detalles logo.png"
+if os.path.exists(logo_path):
+    col_logo1, col_logo2, col_logo3 = st.columns([2, 1, 2])
+    with col_logo2:
+        st.image(logo_path, use_container_width=True)
+
+# Títulos de cara al cliente
+st.markdown("<h1>Calculadora de Impacto Ambiental</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #665255; font-size: 1.1rem;'>Descubre el impacto positivo y el CO₂ que evitamos juntos al transformar tus uniformes en desuso a través del Upcycling con Pequeños Detalles.</p>", unsafe_allow_html=True)
+
+st.markdown("---")
+
+# BASE DE DATOS MAESTRA COMPLETA (Interna y oculta para el cliente)
 bd_factores_completa = {
     "Banner": 9.50, "Bata de laboratorio": 6.57, "Bolsas": 8.00, "Camisa": 6.57,
     "Camisa algodón": 5.00, "Camisa drill": 5.90, "Camisa ignífuga": 5.35,
@@ -51,95 +98,79 @@ bd_factores_completa = {
 if 'lista_calculadora' not in st.session_state:
     st.session_state.lista_calculadora = []
 
-# --- ENCABEZADO ILUSTRATIVO ---
-st.title("🌱 Sistema de Medición Ecológica: Valorización Textil")
-st.caption("Plataforma interactiva para el cálculo instantáneo de huella de carbono evitada mediante Upcycling.")
-
-st.markdown("---")
-
-# Estructura en 2 columnas amplias y estilizadas
+# Distribución de la pantalla
 col_izq, col_der = st.columns([1.1, 2], gap="large")
 
 with col_izq:
-    # Contenedor visual para el formulario de entrada
-    with st.container(border=True):
-        st.subheader("📥 Registro de Lote")
+    with st.container():
+        st.subheader("📥 Tus Uniformes")
         
-        prenda_sel = st.selectbox("👔 Tipo de Prenda Textil", options=sorted(list(bd_factores_completa.keys())))
+        prenda_sel = st.selectbox("👔 Tipo de Prenda / Uniforme", options=sorted(list(bd_factores_completa.keys())))
         
         c1, c2 = st.columns(2)
         with c1:
-            cantidad = st.number_input("🔢 Cantidad (und)", min_value=1, value=100, step=10)
+            cantidad = st.number_input("🔢 Cantidad (unidades)", min_value=1, value=100, step=10)
         with c2:
             peso_total = st.number_input("⚖️ Peso Total (kg)", min_value=0.1, value=43.0, step=1.0)
         
-        # Muestra el indicador del factor ecológico actual de forma sutil
-        factor_actual = bd_factores_completa.get(prenda_sel, 5.0)
-        st.info(f"💡 **Factor asignado:** {factor_actual} kg CO2e por cada kilo de {prenda_sel}.")
-        
         st.markdown(" ")
         
-        # Botones estéticos de control
         c_btn1, c_btn2 = st.columns(2)
         with c_btn1:
-            if st.button("➕ Añadir Lote", use_container_width=True):
+            if st.button("➕ Añadir al Cálculo", use_container_width=True):
+                factor_actual = bd_factores_completa.get(prenda_sel, 5.0)
                 st.session_state.lista_calculadora.append({
                     "Tipo de prenda": prenda_sel,
                     "Cantidad (und)": int(cantidad),
                     "Peso total (kg)": round(peso_total, 2),
-                    "Factor Eco": factor_actual,
                     "CO2 Evitado (kg)": round(peso_total * factor_actual, 2)
                 })
-                st.toast(f"✨ ¡{prenda_sel} agregada con éxito!")
+                st.toast(f"🌸 {prenda_sel} agregada")
                 
         with c_btn2:
-            if st.button("🗑️ Reiniciar", use_container_width=True):
+            if st.button("🗑️ Vaciar", use_container_width=True):
                 st.session_state.lista_calculadora = []
-                st.toast("Calculadora limpia")
+                st.toast("Calculadora reiniciada")
 
 with col_der:
-    st.subheader("📋 Panel de Monitoreo")
-    
-    if st.session_state.lista_calculadora:
-        df = pd.DataFrame(st.session_state.lista_calculadora)
+    with st.container():
+        st.subheader("📋 Resumen del Impacto")
         
-        # Tabla interactiva con colores y diseño limpio
-        st.dataframe(
-            df, 
-            use_container_width=True, 
-            hide_index=True,
-            column_config={
-                "CO2 Evitado (kg)": st.column_config.NumberColumn(format="%d 🍃"),
-                "Peso total (kg)": st.column_config.NumberColumn(format="%d kg")
-            }
-        )
-        
-        # --- BLOQUE VISUAL DE INDICADORES (TARJETAS DE TRIPLE IMPACTO) ---
-        st.markdown(" ")
-        st.subheader("📊 Métricas de Impacto Acumulado")
-        
-        tot_und = int(df["Cantidad (und)"].sum())
-        tot_kg = round(df["Peso total (kg)"].sum(), 2)
-        tot_co2 = round(df["CO2 Evitado (kg)"].sum(), 2)
-        
-        # Creamos tres tarjetas con fondo visual utilizando columnas de Streamlit
-        m1, m2, m3 = st.columns(3)
-        with m1:
-            st.metric(label="📦 Total de Prendas Salvadas", value=f"{tot_und} unidades", delta="Textil recuperado")
-        with m2:
-            st.metric(label="♻️ Peso Neto Desviado del Vertedero", value=f"{tot_kg} kg", delta="Materia prima viva")
-        with m3:
-            # Resaltamos con un color verde el indicador clave de impacto de carbono
-            st.metric(label="🍃 Huella de CO₂ Evitada Total", value=f"{tot_co2} kg CO2e", delta="Mitigación Ambiental", delta_color="normal")
+        if st.session_state.lista_calculadora:
+            df = pd.DataFrame(st.session_state.lista_calculadora)
             
-        # Mensaje de motivación ecológico dinámico basado en el éxito del conteo
-        st.success(f"🌍 ¡Gran trabajo! Con este proyecto se está evitando el equivalente a la emisión de gases de un auto promedio manejando por {round(tot_co2 * 4, 1)} kilómetros.")
+            # Tabla limpia: Oculta la columna "Factor Eco" por privacidad
+            st.dataframe(
+                df[["Tipo de prenda", "Cantidad (und)", "Peso total (kg)", "CO2 Evitado (kg)"]], 
+                use_container_width=True, 
+                hide_index=True,
+                column_config={
+                    "CO2 Evitado (kg)": st.column_config.NumberColumn(format="%.2f kg CO2e 🍃"),
+                    "Peso total (kg)": st.column_config.NumberColumn(format="%.2f kg ⚖️")
+                }
+            )
             
-    else:
-        # Estado vacío interactivo con diseño amigable
-        st.markdown("""
-        <div style='text-align:center; padding:40px; border:2px dashed #b7d7b7; background-color:#f4fbf4; border-radius:12px; color:#3d6346;'>
-            <h3>👋 ¡Hola! La calculadora ambiental está lista para operar.</h3>
-            <p>Selecciona una prenda a la izquierda y presiona el botón verde para comenzar a trazar tu impacto sustentable.</p>
-        </div>
-        """, unsafe_allow_html=True)
+            st.markdown(" ")
+            st.subheader("🌸 Totales de Triple Impacto")
+            
+            tot_und = int(df["Cantidad (und)"].sum())
+            tot_kg = round(df["Peso total (kg)"].sum(), 2)
+            tot_co2 = round(df["CO2 Evitado (kg)"].sum(), 2)
+            
+            m1, m2, m3 = st.columns(3)
+            with m1:
+                st.metric(label="📦 Uniformes Recuperados", value=f"{tot_und} und")
+            with m2:
+                st.metric(label="♻️ Residuo Textil Evitado", value=f"{tot_kg} kg")
+            with m3:
+                st.metric(label="🍃 Huella de CO₂ Mitigada", value=f"{tot_co2} kg CO2e")
+                
+            st.success(f"🌍 **El valor de tu acción:** ¡Trabajando con Pequeños Detalles estás evitando el equivalente a las emisiones de un automóvil promedio recorriendo {round(tot_co2 * 4, 1)} kilómetros!")
+                
+        else:
+            st.markdown("""
+            <div style='text-align:center; padding:40px; color:#7a5c62;'>
+                <h4>✨ ¡Te damos la bienvenida!</h4>
+                <p>Agrega las prendas que deseas procesar a la izquierda para ver en tiempo real cómo reduces el impacto ambiental de tu empresa corporativa.</p>
+            </div>
+            """, unsafe_allow_html=True)
