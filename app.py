@@ -2,36 +2,30 @@ import streamlit as st
 import pandas as pd
 import os
 
-# 1. Configuración de página
+# 1. Configuración
 st.set_page_config(page_title="Pequeños Detalles - Impacto", layout="wide")
 
-# 2. Estilos profesionales (Montserrat)
+# 2. Estilos profesionales
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
     .stApp { background-color: #faf6f5; font-family: 'Montserrat', sans-serif !important; }
     h1 { color: #3a2226; font-family: 'Montserrat', sans-serif !important; text-align: center; }
     .metric-card {
-        background-color: #ffffff; padding: 25px; border-radius: 20px;
-        text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        background-color: #ffffff; padding: 20px; border-radius: 15px;
+        text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05);
         border: 1px solid #fce4ec; height: 100%;
     }
-    .metric-val { font-size: 1.6rem; font-weight: 700; color: #e57393; }
+    .metric-val { font-size: 1.4rem; font-weight: 700; color: #e57393; margin-bottom: 5px; }
+    .metric-desc { font-size: 0.8rem; color: #705a5d; line-height: 1.3; }
     </style>
 """, unsafe_allow_html=True)
 
-# 3. Lógica de persistencia de datos
-if 'data' not in st.session_state:
-    st.session_state.data = []
-
-# Logo (asegúrate que el nombre sea exactamente 'pequeños detalles logo.png')
-if os.path.exists("pequeños detalles logo.png"):
-    _, c, _ = st.columns([3, 1, 3])
-    with c: st.image("pequeños detalles logo.png")
+if 'data' not in st.session_state: st.session_state.data = []
 
 st.markdown("<h1>Calculadora de Impacto Ambiental</h1>", unsafe_allow_html=True)
 
-# 4. Base de datos completa
+# 3. Base de datos completa
 bd_factores = {
     "Banner": 9.50, "Bata de laboratorio": 6.57, "Bolsas": 8.00, "Camisa": 6.57,
     "Camisa algodón": 5.00, "Camisa drill": 5.90, "Camisa ignífuga": 5.35,
@@ -60,7 +54,6 @@ with col1:
     p = st.selectbox("Prenda", sorted(list(bd_factores.keys())))
     q = st.number_input("Cantidad", 1, 1000)
     w = st.number_input("Peso total (kg)", 0.1, 500.0)
-    
     if st.button("➕ Agregar al reporte"):
         st.session_state.data.append({"Prenda": p, "Und": q, "Kg": w, "CO2": w * bd_factores[p]})
         st.rerun()
@@ -72,4 +65,16 @@ with col2:
         
         st.subheader("✨ Tu Impacto Total")
         m1, m2, m3 = st.columns(3)
-        m1.markdown(f'<div class="metric-card"><div class="metric-val">🌳 {round(tot_co2/22, 1)} Árboles</div></div>', unsafe_allow_html=True)
+        
+        m1.markdown(f'''<div class="metric-card"><div class="metric-val">🌳 {round(tot_co2/22, 1)} Árboles</div>
+                    <div class="metric-desc">Equivalente al trabajo anual de absorción de CO₂ de árboles maduros.</div></div>''', unsafe_allow_html=True)
+        m2.markdown(f'''<div class="metric-card"><div class="metric-val">💧 {int(tot_kg * 10000):,} L</div>
+                    <div class="metric-desc">Agua dulce ahorrada al evitar procesos industriales de producción textil.</div></div>''', unsafe_allow_html=True)
+        m3.markdown(f'''<div class="metric-card"><div class="metric-val">🚗 {int(tot_co2/0.25):,} km</div>
+                    <div class="metric-desc">Huella de CO₂ evitada, equivalente a la distancia recorrida por un auto promedio.</div></div>''', unsafe_allow_html=True)
+        
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.dataframe(df, use_container_width=True)
+        if st.button("🗑️ Limpiar todo"):
+            st.session_state.data = []
+            st.rerun()
