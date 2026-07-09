@@ -50,4 +50,39 @@ bd_factores = {
     "Pantalón jean": (5.0, 10000), "Pantalón jean / drill": (5.45, 5000), "Pantalón jean con cinta reflectiva": (5.05, 5000),
     "Pantalón polar": (6.0, 5000), "Pantalón térmico": (5.82, 5000), "Polera": (5.0, 10000),
     "Polera polar": (6.0, 5000), "Polo": (5.0, 10000), "Polo algodón": (5.0, 10000), "Polo con cinta reflectiva": (5.05, 5000),
-    "Polo manga corta": (5.0, 1
+    "Polo manga corta": (5.0, 10000), "Polo manga larga": (6.8, 10000), "Polo manga larga con cinta reflectiva": (6.86, 5000),
+    "Polo piqué": (5.0, 10000), "Short": (5.0, 10000), "Toalla": (5.0, 10000), "Chaleco Fluorescente": (6.62, 5000)
+}
+
+col1, col2 = st.columns([1, 2])
+
+with col1:
+    st.subheader("📥 Registro")
+    p = st.selectbox("Prenda", sorted(list(bd_factores.keys())))
+    q = st.number_input("Cantidad", 1, 1000)
+    w = st.number_input("Peso total (kg)", 0.1, 500.0)
+    if st.button("➕ Agregar al reporte"):
+        f_co2, f_agua = bd_factores[p]
+        st.session_state.data.append({"Prenda": p, "Und": q, "Kg": w, "CO2": w * f_co2, "Agua": w * f_agua})
+        st.rerun()
+
+with col2:
+    if st.session_state.data:
+        df = pd.DataFrame(st.session_state.data)
+        tot_co2, tot_agua = df["CO2"].sum(), df["Agua"].sum()
+        
+        st.subheader("📋 Detalle de Prendas")
+        # Usamos to_html para eliminar el índice de forma forzosa
+        st.write(df[["Prenda", "Und", "Kg", "CO2"]].to_html(index=False), unsafe_allow_html=True)
+        
+        st.markdown(f'<div class="co2-total">Total CO₂ Evitado: {round(tot_co2, 2)} kg</div>', unsafe_allow_html=True)
+        
+        st.subheader("✨ Tu Impacto Total")
+        m1, m2, m3 = st.columns(3)
+        m1.markdown(f'''<div class="metric-card"><div class="metric-val">🌳 {round(tot_co2/22, 1)} Árboles</div><div class="metric-desc">Absorción de CO₂ anual.</div></div>''', unsafe_allow_html=True)
+        m2.markdown(f'''<div class="metric-card"><div class="metric-val">💧 {int(tot_agua):,} L</div><div class="metric-desc">Agua dulce ahorrada.</div></div>''', unsafe_allow_html=True)
+        m3.markdown(f'''<div class="metric-card"><div class="metric-val">🚗 {int(tot_co2/0.25):,} km</div><div class="metric-desc">Huella vehicular evitada.</div></div>''', unsafe_allow_html=True)
+        
+        if st.button("🗑️ Limpiar todo"):
+            st.session_state.data = []
+            st.rerun()
