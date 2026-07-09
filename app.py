@@ -12,12 +12,10 @@ st.set_page_config(
 # 2. ESTILOS CSS CON LOS TONOS ROSADOS Y CORPORATIVOS DE TU LOGO
 st.markdown("""
     <style>
-    /* Fondo general de la aplicación: un tono hueso/crema muy suave y elegante */
     .stApp {
         background-color: #faf6f5;
     }
     
-    /* Contenedores estilo tarjeta blanca con bordes sutiles */
     div[data-testid="stVerticalBlock"] > div[data-testid="stContainer"] {
         background-color: #ffffff;
         padding: 26px;
@@ -27,7 +25,6 @@ st.markdown("""
         margin-bottom: 20px;
     }
     
-    /* Títulos principales en un tono oscuro sofisticado */
     h1 {
         color: #3a2226;
         font-family: 'Segoe UI', Roboto, sans-serif;
@@ -36,13 +33,12 @@ st.markdown("""
     }
     
     h3 {
-        color: #e57393; /* El rosa característico de tu marca */
+        color: #e57393;
         font-family: 'Segoe UI', Roboto, sans-serif;
         font-weight: 600;
         margin-bottom: 15px !important;
     }
     
-    /* Botón Principal con el rosa del logo */
     .stButton>button {
         background-color: #f17394;
         color: white;
@@ -57,23 +53,46 @@ st.markdown("""
         color: white;
         transform: translateY(-1px);
     }
+    
+    /* Estilos especiales para las tarjetas de equivalencias */
+    .eq-card {
+        background-color: #fff8f9;
+        border: 1px solid #fce4ec;
+        padding: 20px;
+        border-radius: 12px;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    }
+    .eq-icon {
+        font-size: 2.8rem;
+        margin-bottom: 10px;
+    }
+    .eq-value {
+        font-size: 1.6rem;
+        font-weight: bold;
+        color: #3a2226;
+        margin-bottom: 5px;
+    }
+    .eq-text {
+        font-size: 0.9rem;
+        color: #705a5d;
+    }
     </style>
 """, unsafe_allow_html=True)
 
-# 3. INTERFAZ: LOGO CENTRADO (Ya corregido a .png)
+# 3. INTERFAZ: LOGO CENTRADO
 logo_path = "pequeños detalles logo.png"
 if os.path.exists(logo_path):
     col_logo1, col_logo2, col_logo3 = st.columns([2, 1, 2])
     with col_logo2:
         st.image(logo_path, use_container_width=True)
 
-# Títulos de cara al cliente
 st.markdown("<h1>Calculadora de Impacto Ambiental</h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center; color: #665255; font-size: 1.1rem;'>Descubre el impacto positivo y el CO₂ que evitamos juntos al transformar tus uniformes en desuso a través del Upcycling con Pequeños Detalles.</p>", unsafe_allow_html=True)
 
 st.markdown("---")
 
-# BASE DE DATOS MAESTRA COMPLETA (Interna y oculta para el cliente)
+# BASE DE DATOS MAESTRA COMPLETA (Oculta para el cliente)
 bd_factores_completa = {
     "Banner": 9.50, "Bata de laboratorio": 6.57, "Bolsas": 8.00, "Camisa": 6.57,
     "Camisa algodón": 5.00, "Camisa drill": 5.90, "Camisa ignífuga": 5.35,
@@ -98,7 +117,6 @@ bd_factores_completa = {
 if 'lista_calculadora' not in st.session_state:
     st.session_state.lista_calculadora = []
 
-# Distribución de la pantalla
 col_izq, col_der = st.columns([1.1, 2], gap="large")
 
 with col_izq:
@@ -139,7 +157,6 @@ with col_der:
         if st.session_state.lista_calculadora:
             df = pd.DataFrame(st.session_state.lista_calculadora)
             
-            # Tabla limpia: Oculta la columna "Factor Eco" por privacidad
             st.dataframe(
                 df[["Tipo de prenda", "Cantidad (und)", "Peso total (kg)", "CO2 Evitado (kg)"]], 
                 use_container_width=True, 
@@ -164,8 +181,45 @@ with col_der:
                 st.metric(label="♻️ Residuo Textil Evitado", value=f"{tot_kg} kg")
             with m3:
                 st.metric(label="🍃 Huella de CO₂ Mitigada", value=f"{tot_co2} kg CO2e")
+            
+            # --- NUEVA SECCIÓN VISUAL DE EQUIVALENCIAS CORPORATIVAS ---
+            st.markdown("---")
+            st.subheader("🌍 Equivalencias de tu Impacto Ecológico")
+            st.markdown("<p style='color: #705a5d; margin-bottom: 20px;'>Para entender mejor tu huella, mitigar esa cantidad de CO₂ equivale visualmente a:</p>", unsafe_allow_html=True)
+            
+            # Cálculos exactos basados en la EPA
+            auto_km = round(tot_co2 / 0.25, 1)
+            arboles_ano = round(tot_co2 / 22.0, 1)
+            celulares_carga = int(tot_co2 / 0.008)
+            
+            eq1, eq2, eq3 = st.columns(3)
+            
+            with eq1:
+                st.markdown(f"""
+                <div class="eq-card">
+                    <div class="eq-icon">🚗</div>
+                    <div class="eq-value">{auto_km:,} km</div>
+                    <div class="eq-text">Recorridos por un auto promedio sin emitir gases contaminantes.</div>
+                </div>
+                """, unsafe_allow_html=True)
                 
-            st.success(f"🌍 **El valor de tu acción:** ¡Trabajando con Pequeños Detalles estás evitando el equivalente a las emisiones de un automóvil promedio recorriendo {round(tot_co2 * 4, 1)} kilómetros!")
+            with eq2:
+                st.markdown(f"""
+                <div class="eq-card">
+                    <div class="eq-icon">🌳</div>
+                    <div class="eq-value">{arboles_ano:,} árboles</div>
+                    <div class="eq-text">Absorbiendo carbono activamente de la atmósfera durante todo un año completo.</div>
+                </div>
+                """, unsafe_allow_html=True)
+                
+            with eq3:
+                st.markdown(f"""
+                <div class="eq-card">
+                    <div class="eq-icon">🔋</div>
+                    <div class="eq-value">{celulares_carga:,}</div>
+                    <div class="eq-text">Baterías de smartphones cargadas por completo desde cero de forma limpia.</div>
+                </div>
+                """, unsafe_allow_html=True)
                 
         else:
             st.markdown("""
