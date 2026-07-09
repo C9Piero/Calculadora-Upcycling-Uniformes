@@ -2,30 +2,27 @@ import streamlit as st
 import pandas as pd
 import os
 
-# 1. Configuración
+# 1. Configuración de página
 st.set_page_config(page_title="Pequeños Detalles - Impacto", layout="wide")
 
-# 2. Estilos con tamaños aumentados y tabla alineada a la izquierda
-    st.markdown("""
-        <style>
-        @import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700&display=swap');
-        .stApp { background-color: #faf6f5; font-family: 'League Spartan', sans-serif !important; }
-        h1 { color: #3a2226; font-family: 'League Spartan', sans-serif !important; text-align: center; font-size: 3.5rem !important; }
-        .sub-title { text-align: center; color: #705a5d; font-size: 1.5rem; margin-bottom: 40px; font-weight: 400; }
-        .metric-card { background-color: #ffffff; padding: 30px; border-radius: 15px; text-align: center; box-shadow: 0 8px 20px rgba(0,0,0,0.1); border: 1px solid #fce4ec; height: 100%; }
-        .metric-val { font-size: 2.2rem; font-weight: 700; color: #e57393; margin-bottom: 10px; }
-        .metric-desc { font-size: 1.0rem; color: #705a5d; line-height: 1.4; }
-        .co2-total { background-color: #fce4ec; color: #3a2226; padding: 25px; border-radius: 15px; text-align: center; font-weight: 700; font-size: 2.0rem; margin: 40px 0; border: 2px solid #f17394; }
-        
-        /* Ajuste específico para la tabla */
-        table { width: 100%; border-collapse: collapse; margin-bottom: 30px; font-family: 'League Spartan', sans-serif; font-size: 1.1rem; }
-        th { background-color: #fce4ec; padding: 15px; text-align: left !important; color: #3a2226; }
-        td { padding: 12px; border-bottom: 1px solid #eee; text-align: left !important; }
-        </style>
-    """, unsafe_allow_html=True)
+# 2. Estilos profesionales
+st.markdown("""
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700&display=swap');
+    .stApp { background-color: #faf6f5; font-family: 'League Spartan', sans-serif !important; }
+    h1 { color: #3a2226; font-family: 'League Spartan', sans-serif !important; text-align: center; font-size: 3.5rem !important; }
+    .sub-title { text-align: center; color: #705a5d; font-size: 1.5rem; margin-bottom: 40px; font-weight: 400; }
+    .metric-card { background-color: #ffffff; padding: 30px; border-radius: 15px; text-align: center; box-shadow: 0 8px 20px rgba(0,0,0,0.1); border: 1px solid #fce4ec; height: 100%; }
+    .metric-val { font-size: 2.2rem; font-weight: 700; color: #e57393; margin-bottom: 10px; }
+    .metric-desc { font-size: 1.0rem; color: #705a5d; line-height: 1.4; }
+    .co2-total { background-color: #fce4ec; color: #3a2226; padding: 25px; border-radius: 15px; text-align: center; font-weight: 700; font-size: 2.0rem; margin: 40px 0; border: 2px solid #f17394; }
+    table { width: 100%; font-family: 'League Spartan', sans-serif; font-size: 1.1rem; }
+    </style>
+""", unsafe_allow_html=True)
+
 if 'data' not in st.session_state: st.session_state.data = []
 
-# Logo
+# 3. Logo
 if os.path.exists("pequeños detalles logo.png"):
     _, c, _ = st.columns([3, 1, 3])
     with c: st.image("pequeños detalles logo.png")
@@ -33,7 +30,7 @@ if os.path.exists("pequeños detalles logo.png"):
 st.markdown("<h1>Calculadora de Impacto Ambiental</h1>", unsafe_allow_html=True)
 st.markdown("<p class='sub-title'>Descubre el impacto positivo que logramos al transformar tus uniformes en desuso a través de nuestro proceso de Upcycling.</p>", unsafe_allow_html=True)
 
-# Base de datos
+# 4. Base de datos completa (Factor CO2, Factor Agua L/kg)
 bd_factores = {
     "Banner": (9.5, 10000), "Bata de laboratorio": (6.57, 10000), "Bolsas": (8.0, 10000), "Camisa": (6.57, 10000),
     "Camisa algodón": (5.0, 10000), "Camisa drill": (5.9, 5000), "Camisa ignífuga": (5.35, 5000),
@@ -55,6 +52,7 @@ bd_factores = {
     "Polo piqué": (5.0, 10000), "Short": (5.0, 10000), "Toalla": (5.0, 10000), "Chaleco Fluorescente": (6.62, 5000)
 }
 
+# 5. Interfaz
 col1, col2 = st.columns([1, 2])
 
 with col1:
@@ -73,7 +71,7 @@ with col2:
         tot_co2, tot_agua = df["CO2"].sum(), df["Agua"].sum()
         
         st.subheader("📋 Detalle de Prendas")
-        st.write(df[["Prenda", "Und", "Kg", "CO2"]].to_html(index=False), unsafe_allow_html=True)
+        st.table(df[["Prenda", "Und", "Kg", "CO2"]].reset_index(drop=True))
         
         st.markdown(f'<div class="co2-total">Total CO₂ Evitado: {round(tot_co2, 2)} kg</div>', unsafe_allow_html=True)
         
