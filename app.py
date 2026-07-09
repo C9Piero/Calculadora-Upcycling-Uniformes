@@ -5,20 +5,20 @@ import os
 # 1. Configuración
 st.set_page_config(page_title="Pequeños Detalles - Impacto", layout="wide")
 
-# 2. Estilos profesionales
+# 2. Estilos profesionales con League Spartan
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
-    .stApp { background-color: #faf6f5; font-family: 'Inter', sans-serif !important; }
-    h1 { color: #3a2226; font-family: 'Inter', sans-serif !important; text-align: center; }
-    .sub-title { text-align: center; color: #705a5d; font-size: 1.1rem; margin-bottom: 30px; }
+    @import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;600&display=swap');
+    .stApp { background-color: #faf6f5; font-family: 'League Spartan', sans-serif !important; }
+    h1 { color: #3a2226; font-family: 'League Spartan', sans-serif !important; text-align: center; }
+    .sub-title { text-align: center; color: #705a5d; font-size: 1.2rem; margin-bottom: 30px; font-weight: 400; }
     .metric-card { background-color: #ffffff; padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.08); border: 1px solid #fce4ec; height: 100%; }
-    .metric-val { font-size: 1.3rem; font-weight: 600; color: #e57393; margin-bottom: 5px; }
-    .metric-desc { font-size: 0.75rem; color: #705a5d; line-height: 1.3; }
-    .co2-total { background-color: #fce4ec; color: #3a2226; padding: 18px; border-radius: 12px; text-align: center; font-weight: 600; font-size: 1.4rem; margin: 30px 0; border: 1px solid #f17394; }
-    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-    th { background-color: #fce4ec; padding: 10px; text-align: left; }
-    td { padding: 8px; border-bottom: 1px solid #ddd; }
+    .metric-val { font-size: 1.5rem; font-weight: 600; color: #e57393; margin-bottom: 5px; }
+    .metric-desc { font-size: 0.8rem; color: #705a5d; line-height: 1.3; }
+    .co2-total { background-color: #fce4ec; color: #3a2226; padding: 18px; border-radius: 12px; text-align: center; font-weight: 600; font-size: 1.6rem; margin: 30px 0; border: 1px solid #f17394; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-family: 'League Spartan', sans-serif; }
+    th { background-color: #fce4ec; padding: 12px; text-align: left; }
+    td { padding: 10px; border-bottom: 1px solid #eee; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -72,7 +72,6 @@ with col2:
         tot_co2, tot_agua = df["CO2"].sum(), df["Agua"].sum()
         
         st.subheader("📋 Detalle de Prendas")
-        # Usamos to_html para eliminar el índice de forma forzosa
         st.write(df[["Prenda", "Und", "Kg", "CO2"]].to_html(index=False), unsafe_allow_html=True)
         
         st.markdown(f'<div class="co2-total">Total CO₂ Evitado: {round(tot_co2, 2)} kg</div>', unsafe_allow_html=True)
