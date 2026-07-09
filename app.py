@@ -5,23 +5,24 @@ import os
 # 1. Configuración
 st.set_page_config(page_title="Pequeños Detalles - Impacto", layout="wide")
 
-# 2. Estilos con tamaños aumentados
-st.markdown("""
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700&display=swap');
-    .stApp { background-color: #faf6f5; font-family: 'League Spartan', sans-serif !important; }
-    h1 { color: #3a2226; font-family: 'League Spartan', sans-serif !important; text-align: center; font-size: 3.5rem !important; }
-    .sub-title { text-align: center; color: #705a5d; font-size: 1.5rem; margin-bottom: 40px; font-weight: 400; }
-    .metric-card { background-color: #ffffff; padding: 30px; border-radius: 15px; text-align: center; box-shadow: 0 8px 20px rgba(0,0,0,0.1); border: 1px solid #fce4ec; height: 100%; }
-    .metric-val { font-size: 2.2rem; font-weight: 700; color: #e57393; margin-bottom: 10px; }
-    .metric-desc { font-size: 1.0rem; color: #705a5d; line-height: 1.4; }
-    .co2-total { background-color: #fce4ec; color: #3a2226; padding: 25px; border-radius: 15px; text-align: center; font-weight: 700; font-size: 2.0rem; margin: 40px 0; border: 2px solid #f17394; }
-    table { width: 100%; border-collapse: collapse; margin-bottom: 30px; font-family: 'League Spartan', sans-serif; font-size: 1.1rem; }
-    th { background-color: #fce4ec; padding: 15px; text-align: left; }
-    td { padding: 12px; border-bottom: 1px solid #eee; }
-    </style>
-""", unsafe_allow_html=True)
-
+# 2. Estilos con tamaños aumentados y tabla alineada a la izquierda
+    st.markdown("""
+        <style>
+        @import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700&display=swap');
+        .stApp { background-color: #faf6f5; font-family: 'League Spartan', sans-serif !important; }
+        h1 { color: #3a2226; font-family: 'League Spartan', sans-serif !important; text-align: center; font-size: 3.5rem !important; }
+        .sub-title { text-align: center; color: #705a5d; font-size: 1.5rem; margin-bottom: 40px; font-weight: 400; }
+        .metric-card { background-color: #ffffff; padding: 30px; border-radius: 15px; text-align: center; box-shadow: 0 8px 20px rgba(0,0,0,0.1); border: 1px solid #fce4ec; height: 100%; }
+        .metric-val { font-size: 2.2rem; font-weight: 700; color: #e57393; margin-bottom: 10px; }
+        .metric-desc { font-size: 1.0rem; color: #705a5d; line-height: 1.4; }
+        .co2-total { background-color: #fce4ec; color: #3a2226; padding: 25px; border-radius: 15px; text-align: center; font-weight: 700; font-size: 2.0rem; margin: 40px 0; border: 2px solid #f17394; }
+        
+        /* Ajuste específico para la tabla */
+        table { width: 100%; border-collapse: collapse; margin-bottom: 30px; font-family: 'League Spartan', sans-serif; font-size: 1.1rem; }
+        th { background-color: #fce4ec; padding: 15px; text-align: left !important; color: #3a2226; }
+        td { padding: 12px; border-bottom: 1px solid #eee; text-align: left !important; }
+        </style>
+    """, unsafe_allow_html=True)
 if 'data' not in st.session_state: st.session_state.data = []
 
 # Logo
